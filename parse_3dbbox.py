@@ -2,7 +2,7 @@ import numpy as np
 import json
 from PIL import Image, ImageDraw
 
-data_folder = '_out_sdrec5'
+data_folder = '_out_sdrec6'
 
 img = Image.open(f'{data_folder}/rgb_0000.png')
 draw = ImageDraw.Draw(img)
@@ -16,7 +16,6 @@ with open(f'{data_folder}/camera_params_0000.json') as f:
 proj_mat = np.array(camera_params["cameraProjection"]).reshape(4, 4)
 view_mat = np.array(camera_params["cameraViewTransform"]).reshape(4, 4)
 
-view_proj_mat = np.dot(view_mat, proj_mat)
 # print(view_proj_mat)
 
 bbox3d_arr_raw = np.load(f'{data_folder}/bounding_box_3d_0000.npy')
@@ -56,9 +55,8 @@ for i, bbox3d_raw in enumerate(bbox3d_arr_raw):
     # project
     points_homo = np.pad(corners, ((0, 0), (0, 1)), constant_values=1.0)
 
-    world_points_homo = points_homo @ trans
+    tf_points = points_homo @ trans @ view_mat @ proj_mat
 
-    tf_points = np.dot(world_points_homo, view_proj_mat)
     tf_points = tf_points / (tf_points[..., -1:])
     corners_2d = 0.5 * (tf_points[..., :2] + 1)
     corners_2d *= np.array([[width, height]])
