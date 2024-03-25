@@ -336,15 +336,9 @@ class CustomWriterSep(Writer):
                 render_product_path = f"{render_product_name}/"
 
             if annotator.startswith("rgb"):
-                # top cam not save the rgb
-                if 'cam_top' not in render_product_path:
-                    if multi_render_prod:
-                        render_product_path += "rgb/"
-                    self._write_rgb(data, render_product_path, annotator)
-
-            # left and right camera, only save the rgb
-            if 'cam_l' in render_product_path or 'cam_r' in render_product_path:
-                continue
+                if multi_render_prod:
+                    render_product_path += "rgb/"
+                self._write_rgb(data, render_product_path, annotator)
 
             if annotator.startswith("Aug"):
                 if isinstance(data[annotator], dict):

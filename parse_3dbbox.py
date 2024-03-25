@@ -55,6 +55,8 @@ for i, bbox3d_raw in enumerate(bbox3d_arr_raw):
     # project
     points_homo = np.pad(corners, ((0, 0), (0, 1)), constant_values=1.0)
 
+    temp = points_homo @ trans @ view_mat
+
     tf_points = points_homo @ trans @ view_mat @ proj_mat
 
     tf_points = tf_points / (tf_points[..., -1:])
